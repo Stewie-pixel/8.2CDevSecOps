@@ -1,0 +1,18 @@
+name: Run Jenkins Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run-jenkins-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run Jenkins Pipeline
+        uses: jenkinsci/jfr-container-action@master
+        with:
+          jenkinsfile: 'Jenkinsfile'
