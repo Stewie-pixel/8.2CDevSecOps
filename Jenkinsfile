@@ -39,11 +39,12 @@ pipeline {
 
         stage('SonarCloud Analysis') {
             steps {
-                bat '''
-                    curl -o sonar.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
-                    unzip sonar.zip
-                    ./sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner
-                '''
+                bat """
+                    curl -L -o sonar.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-windows.zip
+                    tar -xf sonar.zip
+        
+                    sonar-scanner-5.0.1.3006-windows\\bin\\sonar-scanner.bat
+                """
             }
         }
     }
