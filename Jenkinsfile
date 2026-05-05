@@ -1,55 +1,36 @@
 pipeline {
-  agent any
-  environment {
-    DIRECTORY_PATH = 'C:\Users\Stewie\OneDrive\Documents\Deakin_Uni\T1_Assignment\SIT223\6.1P\'
-    TESTING_ENVIRONMENT = 'testing'
-    PRODUCTION_ENVIRONMENT = 'Stewie'
-  }
-  stages {
-    stage('Build') {
-      steps {
-        checkout scm
-        echo "Fetch the source code from the directory path specified by the environment variable: ${env.DIRECTORY_PATH}"
-        echo 'Compile the code and generate any necessary artefacts'
-      }
-    }
+    agent any
 
-    stage('Test') {
-      steps {
-        echo 'Unit tests'
-        echo 'Integration tests'
-      }
-    }
+    stages {
 
-    stage('Code Quality Check') {
-      steps {
-        echo 'Check the quality of the code'
-      }
-    }
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Stewie-pixel/8.2CDevSecOps.git'
+            }
+        }
 
-    stage('Deploy') {
-      steps {
-        echo "Deploy the application to a testing environment specified by the environment variable: ${env.TESTING_ENVIRONMENT}"
-      }
-    }
+        stage('Install Dependencies') {
+            steps {
+                bat 'npm install'
+            }
+        }
 
-    stage('Approval') {
-      steps {
-        echo 'Simulating manual approval (sleeping for 10 seconds)'
-        sleep time: 10
-      }
-    }
+        stage('Run Tests') {
+            steps {
+                bat 'npm test || exit /b 0'
+            }
+        }
 
-    stage('Deploy to Production') {
-      steps {
-        echo "Deploying the application to the production environment: ${env.PRODUCTION_ENVIRONMENT}"
-      }
-    }
-  }
+        stage('Generate Coverage Report') {
+            steps {
+                bat 'npm run coverage || exit /b 0'
+            }
+        }
 
-  post {
-    always {
-      cleanWs()
+        stage('NPM Audit (Security Scan)') {
+            steps {
+                bat 'npm audit || exit /b 0'
+            }
+        }
     }
-  }
 }
